@@ -18,7 +18,7 @@ public class DatabaseServices : DbContext
     private DbSet<Ingredient> Ingredient { get; set; }
 
     private readonly string _dbName = "Pizza.db";
-    
+
     public DatabaseServices()
     {
         this.Database.EnsureCreated();
