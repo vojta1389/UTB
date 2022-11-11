@@ -9,17 +9,12 @@ public class Pizza
     public int PizzaId { get; set; }
     public string Name { get; set; }
     public double Price { get; set; }
-
-    public Pizza(int id, string name, double price)
+    
+    public Pizza(int pizzaId, string name, double price)
     {
-        PizzaId = id;
+        PizzaId = pizzaId;
         Name = name;
         Price = price;
-    }
-
-    public Pizza()
-    {
-        
     }
 }
 

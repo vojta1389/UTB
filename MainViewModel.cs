@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using PizzaProjectBlank.Models;
 
 namespace PizzaProjectBlank;
@@ -11,6 +8,7 @@ namespace PizzaProjectBlank;
 public class MainViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
+
     private readonly DatabaseServices _databaseServices = new DatabaseServices();
 
     private Order? _finalOrder;
@@ -70,15 +68,21 @@ public class MainViewModel : INotifyPropertyChanged
 
     public void LoadPizzas()
     {
-        PizzaList = _databaseServices.GetPizzas().Result;
+        PizzaList = _databaseServices.Pizza.ToList();
         SelectedPizza = PizzaList?.FirstOrDefault();
     }
     
     public void LoadIngredients()
     {
-        Ingredients = _databaseServices.GetIngredient().Result;
+        Ingredients = _databaseServices.Ingredient.ToList();
     }
-    
+
+    public void LoadOrders()
+    {
+        List<Order> orders = new List<Order>();
+        orders = _databaseServices.Order.ToList();
+    }
+
     public void AddIngredient(Ingredient ingredient)
     {
         if (!ExtraIngredient.Contains(ingredient))
@@ -91,21 +95,19 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public async Task OrderPizza()
+    public void OrderPizza()
     {
         FinalOrder = new Order();
-        DatabaseServices _databaseServices = new DatabaseServices();
         
         if (_selectedPizza != null)
         {
-            FinalOrder.PizzaId = _selectedPizza.PizzaId;
             FinalOrder.Pizza = _selectedPizza;
         }
         
-        if (ExtraIngredient != null)    // Maybe cancel IF later
-        {
-            FinalOrder.ExtraIngredients = ExtraIngredient;
-        }
-        await _databaseServices.Insert(FinalOrder);
+        FinalOrder.Ingredient = ExtraIngredient;
+        
+        _databaseServices.Add(FinalOrder);
+        _databaseServices.SaveChanges();
+        _databaseServices.Dispose();
     }
 }
