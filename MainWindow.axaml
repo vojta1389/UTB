@@ -18,16 +18,18 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         
         <!-- Controls -->
-        <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Fill="#333"/>
-        <Rectangle Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Fill="#333"/>
-        <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Fill="#ddd"/>
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Fill="#333"/>
+        <Rectangle Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Fill="#333"/>
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Fill="#333"/>
+        <Rectangle Grid.Row="0" Grid.Column="4" Grid.RowSpan="5" Fill="#333"/>
         
-        <ListBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Items="{Binding PizzaList}" SelectionMode="Single" SelectedItem="{Binding SelectedPizza}">
+        <ListBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Items="{Binding PizzaList}" SelectionMode="Single" SelectedItem="{Binding SelectedPizza}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="20,60,*,auto,20" Margin="4">
@@ -38,7 +40,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ItemsControl Grid.Row="2" Grid.Column="1" Items="{Binding Ingredients}">
+        <ItemsControl Grid.Row="2" Grid.Column="1" Items="{Binding Ingredients}" Margin="2">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <CheckBox Command="{Binding $parent[ItemsControl].DataContext.AddIngredient}" Content="{Binding Name}" CommandParameter="{Binding}"/>
@@ -46,11 +48,30 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <Button Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Content="Order" Command="{Binding OrderPizza}" HorizontalAlignment="Center" Margin="8" Background="#348feb" Foreground="#fff"/>
+        <Button Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Content="Order HERE!" Command="{Binding OrderPizza}" HorizontalAlignment="Center" Margin="8" Background="#0A84D8" Foreground="#fff"/>
         
-        <StackPanel Grid.Row="3" Grid.Column="2">
-            <TextBlock Text="Your order details:"/>
-            <TextBlock Text="{Binding FinalOrder.Pizza.Name, StringFormat='Your choice is: {0}'}" />
-        </StackPanel>
+        <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="2">
+            <ItemsControl Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Items="{Binding Orders}" Margin="2">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="20, *, *, *" Margin="4">
+                            <TextBlock Grid.Column="0" Text="{Binding OrderId}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Pizza.Name}"/>
+                           <!-- <ItemsControl Grid.Column="2" Items="{Binding Ingredients}" Margin="1">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl> -->
+                            <Button Grid.Column="3" Content="Like" Margin="1" Background="#0A84D8" Foreground="#F7F707" Command="{Binding $parent[ItemsControl].DataContext.MakeFavorite}" CommandParameter="{Binding OrderId}" IsVisible="{Binding !Favorite}"/>
+                            <Button Grid.Column="3" Content="Unlike" Margin="1" Background="#D81936" Foreground="#F0C822" Command="{Binding $parent[ItemsControl].DataContext.MakeFavorite}" CommandParameter="{Binding OrderId}" IsVisible="{Binding Favorite}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>

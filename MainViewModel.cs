@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using PizzaProjectBlank.Models;
@@ -8,7 +10,6 @@ namespace PizzaProjectBlank;
 public class MainViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
-
     private readonly DatabaseServices _databaseServices = new DatabaseServices();
 
     private Order? _finalOrder;
@@ -19,6 +20,17 @@ public class MainViewModel : INotifyPropertyChanged
         {
             _finalOrder = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FinalOrder)));
+        }
+    }
+    
+    private ObservableCollection<Order>? _orders;
+    public ObservableCollection<Order>? Orders
+    {
+        get => _orders;
+        set
+        {
+            _orders = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Orders)));
         }
     }
 
@@ -79,8 +91,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public void LoadOrders()
     {
-        List<Order> orders = new List<Order>();
-        orders = _databaseServices.Order.ToList();
+        Orders = new ObservableCollection<Order>(_databaseServices.Order.ToList());
     }
 
     public void AddIngredient(Ingredient ingredient)
@@ -108,6 +119,26 @@ public class MainViewModel : INotifyPropertyChanged
         
         _databaseServices.Add(FinalOrder);
         _databaseServices.SaveChanges();
-        _databaseServices.Dispose();
+        
+        LoadOrders();
+    }
+
+    public void MakeFavorite(int id)
+    {
+        Order order = _databaseServices.Order.SingleOrDefault(b => b.OrderId == id);
+        
+        if (order != null)
+        {
+            if (!order.Favorite)
+            {
+                order.Favorite = true;  
+            }
+            else
+            {
+                order.Favorite = false;
+            }
+            _databaseServices.SaveChanges();
+            LoadOrders();
+        }
     }
 }

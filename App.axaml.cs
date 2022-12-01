@@ -21,6 +21,7 @@ namespace PizzaProjectBlank
                 
                 mainViewModel.LoadPizzas();
                 mainViewModel.LoadIngredients();
+                mainViewModel.LoadOrders();
             }
 
             base.OnFrameworkInitializationCompleted();
