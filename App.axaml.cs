@@ -15,7 +15,6 @@ namespace PizzaProjectBlank
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                InitialSetup initialSetup = new InitialSetup();
                 MainViewModel mainViewModel = new MainViewModel();
                 desktop.MainWindow = new MainWindow() {DataContext = mainViewModel};
                 

@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using PizzaProjectBlank.Models;
 
 namespace PizzaProjectBlank;
@@ -11,17 +11,6 @@ public class MainViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     private readonly DatabaseServices _databaseServices = new DatabaseServices();
-
-    private Order? _finalOrder;
-    public Order? FinalOrder
-    {
-        get => _finalOrder;
-        set
-        {
-            _finalOrder = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FinalOrder)));
-        }
-    }
     
     private ObservableCollection<Order>? _orders;
     public ObservableCollection<Order>? Orders
@@ -91,7 +80,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public void LoadOrders()
     {
-        Orders = new ObservableCollection<Order>(_databaseServices.Order.ToList());
+        Orders = new ObservableCollection<Order>(_databaseServices.Order.Include(o => o.Ingredient).ToList());
     }
 
     public void AddIngredient(Ingredient ingredient)
@@ -108,17 +97,17 @@ public class MainViewModel : INotifyPropertyChanged
 
     public void OrderPizza()
     {
-        FinalOrder = new Order();
+        Order finalOrder = new Order();
         
         if (_selectedPizza != null)
         {
-            FinalOrder.Pizza = _selectedPizza;
+            finalOrder.Pizza = _selectedPizza;
         }
         
-        FinalOrder.Ingredient = ExtraIngredient;
+        finalOrder.Ingredient = ExtraIngredient;
         
-        _databaseServices.Add(FinalOrder);
-        _databaseServices.SaveChanges();
+        _databaseServices.Add(finalOrder);
+        _databaseServices.SaveChangesAsync();
         
         LoadOrders();
     }
