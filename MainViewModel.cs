@@ -108,7 +108,7 @@ public class MainViewModel : INotifyPropertyChanged
         
         _databaseServices.Add(finalOrder);
         _databaseServices.SaveChangesAsync();
-        
+
         LoadOrders();
     }
 
